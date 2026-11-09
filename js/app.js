@@ -299,6 +299,7 @@
 
       postJSON('/order', orderPayload).then(function (res) {
         if (res && res.ok) {
+          reachGoal('order_sent');
           if (orderTitle) orderTitle.textContent = 'Заявка отправлена';
           if (orderText) orderText.textContent = 'Заявка по курсу «' + name + '» ушла мне в Telegram. Свяжусь, уточним дату, площадку и программу.';
           if (orderCopy) orderCopy.hidden = true;
@@ -555,6 +556,21 @@
     }
   });
 
+
+
+  function reachGoal(name) {
+    if (typeof window.ym === 'function') {
+      window.ym(111414364, 'reachGoal', name);
+    }
+  }
+
+  doc.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) reachGoal('phone_click');
+    else if (href.indexOf('t.me/') !== -1 || href.indexOf('max.ru/') !== -1) reachGoal('messenger_click');
+  });
 
   /* ---------- маска телефона ---------- */
   function maskPhone(input) {
@@ -840,7 +856,12 @@
       var reviewSubject = 'Отзыв о курсе: ' + reviewPayload.course;
       var mailLink = document.getElementById('reviewMailLink');
 
+      var sendGoal = function (name) {
+        if (typeof window.ym === 'function') window.ym(111414364, 'reachGoal', name);
+      };
+
       var showSent = function (viaMail) {
+        sendGoal('review_sent');
         if (sentBox) sentBox.hidden = false;
         if (sentText) {
           sentText.textContent = viaMail
