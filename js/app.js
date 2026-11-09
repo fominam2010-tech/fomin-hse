@@ -284,7 +284,7 @@
       var orderText = doc.getElementById('orderSuccessText');
       var orderCopy = doc.getElementById('orderCopy');
 
-      sendByMail('Заявка на курс: ' + name, [
+      var orderLines = [
         'Курс: ' + name,
         'Компания: ' + (orderData.get('company') || ''),
         'Контактное лицо: ' + (orderData.get('person') || ''),
@@ -295,7 +295,24 @@
         'Дата: ' + (orderData.get('date') || ''),
         'Человек: ' + (orderData.get('people') || ''),
         'Комментарий: ' + (orderData.get('comment') || '')
-      ], 'orderCopy');
+      ];
+      var orderSubject = 'Заявка на курс: ' + name;
+      fillCopyField(orderSubject, orderLines, 'orderCopy');
+      var orderMailLink = doc.getElementById('orderMailLink');
+      var orderCopyBtn = doc.getElementById('orderCopyBtn');
+      var orderCopyHint = doc.getElementById('orderCopyHint');
+
+      var showOrderFallback = function () {
+        if (orderTitle) orderTitle.textContent = 'Письмо сформировано';
+        if (orderText) orderText.textContent = 'Автоматически отправить не удалось. Скопируйте текст или откройте почтовую программу — заявка по курсу «' + name + '» придёт мне на почту.';
+        if (orderCopy) orderCopy.hidden = false;
+        if (orderCopyBtn) orderCopyBtn.hidden = false;
+        if (orderCopyHint) orderCopyHint.hidden = false;
+        if (orderMailLink) {
+          orderMailLink.hidden = false;
+          orderMailLink.href = buildMailUrl(orderSubject, orderLines);
+        }
+      };
 
       postJSON('/order', orderPayload).then(function (res) {
         if (res && res.ok) {
@@ -303,8 +320,13 @@
           if (orderTitle) orderTitle.textContent = 'Заявка отправлена';
           if (orderText) orderText.textContent = 'Заявка по курсу «' + name + '» ушла мне в Telegram. Свяжусь, уточним дату, площадку и программу.';
           if (orderCopy) orderCopy.hidden = true;
+          if (orderCopyBtn) orderCopyBtn.hidden = true;
+          if (orderCopyHint) orderCopyHint.hidden = true;
+          if (orderMailLink) orderMailLink.hidden = true;
+        } else {
+          showOrderFallback();
         }
-      }).catch(function () {});
+      }).catch(showOrderFallback);
 
       orderForm.hidden = true;
       if (orderSuccess) orderSuccess.hidden = false;
@@ -376,6 +398,62 @@
       var label = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex].text : 'услуга';
       var out = doc.getElementById('successService');
       if (out) out.textContent = label;
+
+      var serviceData = new FormData(serviceForm);
+      var servicePayload = {
+        kind: 'service',
+        service: label,
+        name: (serviceData.get('name') || '').toString(),
+        company: (serviceData.get('company') || '').toString(),
+        phone: (serviceData.get('phone') || '').toString(),
+        email: (serviceData.get('email') || '').toString(),
+        comment: (serviceData.get('comment') || '').toString()
+      };
+
+      var serviceLines = [
+        'Услуга: ' + label,
+        'Имя: ' + servicePayload.name,
+        'Компания: ' + servicePayload.company,
+        'Телефон: ' + servicePayload.phone,
+        'Email: ' + servicePayload.email,
+        'Комментарий: ' + servicePayload.comment
+      ];
+      var serviceSubject = 'Заявка на услугу: ' + label;
+      fillCopyField(serviceSubject, serviceLines, 'serviceCopy');
+
+      var serviceTitle = doc.getElementById('serviceSuccessTitle');
+      var serviceText = doc.getElementById('serviceSuccessText');
+      var serviceCopy = doc.getElementById('serviceCopy');
+      var serviceCopyBtn = doc.getElementById('serviceCopyBtn');
+      var serviceCopyHint = doc.getElementById('serviceCopyHint');
+      var serviceMailLink = doc.getElementById('serviceMailLink');
+
+      var showServiceFallback = function () {
+        if (serviceTitle) serviceTitle.textContent = 'Письмо сформировано';
+        if (serviceText) serviceText.textContent = 'Автоматически отправить не удалось. Скопируйте текст или откройте почтовую программу — заявка придёт мне на почту.';
+        if (serviceCopy) serviceCopy.hidden = false;
+        if (serviceCopyBtn) serviceCopyBtn.hidden = false;
+        if (serviceCopyHint) serviceCopyHint.hidden = false;
+        if (serviceMailLink) {
+          serviceMailLink.hidden = false;
+          serviceMailLink.href = buildMailUrl(serviceSubject, serviceLines);
+        }
+      };
+
+      postJSON('/order', servicePayload).then(function (res) {
+        if (res && res.ok) {
+          reachGoal('order_sent');
+          if (serviceTitle) serviceTitle.textContent = 'Заявка отправлена';
+          if (serviceText) serviceText.textContent = 'Заявка на «' + label + '» ушла мне в Telegram. Свяжусь, обсудим задачу и сроки.';
+          if (serviceCopy) serviceCopy.hidden = true;
+          if (serviceCopyBtn) serviceCopyBtn.hidden = true;
+          if (serviceCopyHint) serviceCopyHint.hidden = true;
+          if (serviceMailLink) serviceMailLink.hidden = true;
+        } else {
+          showServiceFallback();
+        }
+      }).catch(showServiceFallback);
+
       serviceForm.hidden = true;
       if (serviceSuccess) serviceSuccess.hidden = false;
       var panel = serviceModal.querySelector('.modal__panel');
