@@ -94,6 +94,19 @@
 
   /* ---------- модальное окно заявки ---------- */
   var modal = doc.getElementById('orderModal');
+
+  var MAIL_TO = 'fam-1981@yandex.ru';
+
+  function sendByMail(subject, lines) {
+    var body = lines.filter(function (line) {
+      var value = line.slice(line.indexOf(':') + 1).trim();
+      return value !== '';
+    }).join('\n');
+    window.location.href = 'mailto:' + MAIL_TO +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+  }
+
   var orderForm = doc.getElementById('orderForm');
   var orderSuccess = doc.getElementById('orderSuccess');
   var courseSearch = doc.getElementById('courseSearch');
@@ -215,9 +228,24 @@
       var selected = doc.querySelector('.picker-item.is-selected');
       var name = isCustom
         ? customInput.value.trim()
-        : (selected ? selected.getAttribute('data-title') : 'курс');
+        : (selected ? selected.getAttribute('data-title') : (courseValue.value || 'курс'));
       var successText = doc.getElementById('successCourse');
       if (successText) successText.textContent = name;
+
+      var orderData = new FormData(orderForm);
+      sendByMail('Заявка на курс: ' + name, [
+        'Курс: ' + name,
+        'Компания: ' + (orderData.get('company') || ''),
+        'Контактное лицо: ' + (orderData.get('person') || ''),
+        'Телефон: ' + (orderData.get('phone') || ''),
+        'Email: ' + (orderData.get('email') || ''),
+        'Город: ' + (orderData.get('city') || ''),
+        'Адрес проведения: ' + (orderData.get('address') || ''),
+        'Дата: ' + (orderData.get('date') || ''),
+        'Человек: ' + (orderData.get('people') || ''),
+        'Комментарий: ' + (orderData.get('comment') || '')
+      ]);
+
       orderForm.hidden = true;
       if (orderSuccess) orderSuccess.hidden = false;
       modal.scrollTop = 0;
