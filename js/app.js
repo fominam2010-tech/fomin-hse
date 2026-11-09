@@ -535,6 +535,33 @@
     }
   });
 
+
+  /* ---------- маска телефона ---------- */
+  function maskPhone(input) {
+    input.addEventListener('focus', function () {
+      if (!input.value.trim()) input.value = '+7 (';
+    });
+    input.addEventListener('input', function () {
+      var digits = input.value.replace(/\D/g, '');
+      if (digits.charAt(0) === '7' || digits.charAt(0) === '8') digits = digits.slice(1);
+      digits = digits.slice(0, 10);
+
+      var out = '+7';
+      if (digits.length) out += ' (' + digits.slice(0, 3);
+      if (digits.length >= 3) out += ')';
+      if (digits.length > 3) out += ' ' + digits.slice(3, 6);
+      if (digits.length > 6) out += '-' + digits.slice(6, 8);
+      if (digits.length > 8) out += '-' + digits.slice(8, 10);
+
+      input.value = out;
+    });
+    input.addEventListener('blur', function () {
+      if (input.value.trim() === '+7 (' || input.value.trim() === '+7') input.value = '';
+    });
+  }
+
+  doc.querySelectorAll('input[type="tel"]').forEach(maskPhone);
+
   /* ---------- просмотр фото и материалов ---------- */
   var lightbox = doc.getElementById('lightbox');
   var lightboxScroll = doc.getElementById('lightboxScroll');
