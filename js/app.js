@@ -676,7 +676,7 @@
     }).join('\n');
   }
 
-  var KEY = 'fomin_reviews_v1';
+  var KEY = 'fomin_reviews_v2';
 
 
   var PROFANITY_ROOTS = [
