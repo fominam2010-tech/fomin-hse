@@ -97,11 +97,13 @@
 
   var MAIL_TO = 'fam-1981@yandex.ru';
 
-  function sendByMail(subject, lines) {
+  function sendByMail(subject, lines, copyFieldId) {
     var body = lines.filter(function (line) {
       var value = line.slice(line.indexOf(':') + 1).trim();
       return value !== '';
     }).join('\n');
+    var field = copyFieldId ? doc.getElementById(copyFieldId) : null;
+    if (field) field.value = subject + '\n\n' + body;
     window.location.href = 'mailto:' + MAIL_TO +
       '?subject=' + encodeURIComponent(subject) +
       '&body=' + encodeURIComponent(body);
@@ -244,7 +246,7 @@
         'Дата: ' + (orderData.get('date') || ''),
         'Человек: ' + (orderData.get('people') || ''),
         'Комментарий: ' + (orderData.get('comment') || '')
-      ]);
+      ], 'orderCopy');
 
       orderForm.hidden = true;
       if (orderSuccess) orderSuccess.hidden = false;
@@ -475,6 +477,26 @@
     if (current === href) link.classList.add('is-active');
   });
 
+
+
+  doc.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-copy-order]');
+    if (!btn) return;
+    var target = doc.getElementById(btn.getAttribute('data-copy-target'));
+    if (!target) return;
+    target.select();
+    var done = function () {
+      var old = btn.textContent;
+      btn.textContent = 'Скопировано';
+      setTimeout(function () { btn.textContent = old; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(target.value).then(done).catch(function () { document.execCommand('copy'); done(); });
+    } else {
+      document.execCommand('copy');
+      done();
+    }
+  });
 
   /* ---------- просмотр фото и материалов ---------- */
   var lightbox = doc.getElementById('lightbox');
