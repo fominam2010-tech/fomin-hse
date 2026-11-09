@@ -99,25 +99,45 @@
   var API_BASE = 'https://fomin-hse-api.fomin-hse.workers.dev';
 
   function postJSON(path, payload) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 6000);
     return fetch(API_BASE + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function (response) { return response.json(); });
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    }).then(function (response) {
+      clearTimeout(timer);
+      return response.json();
+    }, function (error) {
+      clearTimeout(timer);
+      throw error;
+    });
   }
 
   var MAIL_TO = 'fam-1981@yandex.ru';
 
-  function sendByMail(subject, lines, copyFieldId) {
+  function buildMailUrl(subject, lines) {
     var body = lines.filter(function (line) {
       var value = line.slice(line.indexOf(':') + 1).trim();
       return value !== '';
     }).join('\n');
-    var field = copyFieldId ? doc.getElementById(copyFieldId) : null;
-    if (field) field.value = subject + '\n\n' + body;
-    window.location.href = 'mailto:' + MAIL_TO +
+    return 'mailto:' + MAIL_TO +
       '?subject=' + encodeURIComponent(subject) +
       '&body=' + encodeURIComponent(body);
+  }
+
+  function fillCopyField(subject, lines, fieldId) {
+    var field = fieldId ? doc.getElementById(fieldId) : null;
+    if (field) field.value = subject + '\n\n' + lines.filter(function (line) {
+      var value = line.slice(line.indexOf(':') + 1).trim();
+      return value !== '';
+    }).join('\n');
+  }
+
+  function sendByMail(subject, lines, copyFieldId) {
+    fillCopyField(subject, lines, copyFieldId);
+    window.location.href = buildMailUrl(subject, lines);
   }
 
   var orderForm = doc.getElementById('orderForm');
@@ -619,6 +639,43 @@
    ОТЗЫВЫ И РЕЙТИНГ
    ============================================================ */
 (function () {
+  var API_BASE = 'https://fomin-hse-api.fomin-hse.workers.dev';
+  var MAIL_TO = 'fam-1981@yandex.ru';
+
+  function postJSON(path, payload) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 6000);
+    return fetch(API_BASE + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    }).then(function (response) {
+      clearTimeout(timer);
+      return response.json();
+    }, function (error) {
+      clearTimeout(timer);
+      throw error;
+    });
+  }
+
+  function buildMailUrl(subject, lines) {
+    var body = lines.filter(function (line) {
+      var value = line.slice(line.indexOf(':') + 1).trim();
+      return value !== '';
+    }).join('\n');
+    return 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
+  function fillCopyField(subject, lines, fieldId) {
+    var field = fieldId ? document.getElementById(fieldId) : null;
+    if (!field) return;
+    field.value = subject + '\n\n' + lines.filter(function (line) {
+      var value = line.slice(line.indexOf(':') + 1).trim();
+      return value !== '';
+    }).join('\n');
+  }
+
   var KEY = 'fomin_reviews_v1';
 
 
@@ -766,15 +823,51 @@
         text: (data.get('text') || '').toString().trim()
       };
 
+      var sentBox = document.getElementById('reviewSent');
+      var sentText = document.getElementById('reviewSentText');
+      var copyField = document.getElementById('reviewCopy');
+      var copyBtn = document.getElementById('reviewCopyBtn');
+      var copyHint = document.getElementById('reviewCopyHint');
+
+      var reviewLines = [
+        'Имя: ' + reviewPayload.name,
+        'Компания: ' + reviewPayload.company,
+        'Курс: ' + reviewPayload.course,
+        'Дата: ' + reviewPayload.date,
+        'Оценка: ' + reviewPayload.rating + ' из 5',
+        'Текст: ' + reviewPayload.text
+      ];
+      var reviewSubject = 'Отзыв о курсе: ' + reviewPayload.course;
+      var mailLink = document.getElementById('reviewMailLink');
+
+      var showSent = function (viaMail) {
+        if (sentBox) sentBox.hidden = false;
+        if (sentText) {
+          sentText.textContent = viaMail
+            ? 'Заявка на публикацию ушла письмом. Публикую после проверки.'
+            : 'Спасибо! Публикую после проверки.';
+        }
+        if (copyField) copyField.hidden = !viaMail;
+        if (copyBtn) copyBtn.hidden = !viaMail;
+        if (copyHint) copyHint.hidden = !viaMail;
+        if (mailLink) {
+          mailLink.hidden = !viaMail;
+          if (viaMail) mailLink.href = buildMailUrl(reviewSubject, reviewLines);
+        }
+        if (viaMail) fillCopyField(reviewSubject, reviewLines, 'reviewCopy');
+        form.hidden = true;
+        paintRatings();
+      };
+
       postJSON('/review', reviewPayload).then(function (res) {
         if (res && res.ok) {
-          var empty = document.getElementById('reviewsEmpty');
-          if (empty) {
-            empty.hidden = false;
-            empty.textContent = 'Спасибо! Отзыв отправлен на проверку — появится после одобрения.';
-          }
+          showSent(false);
+        } else {
+          showSent(true);
         }
-      }).catch(function () {});
+      }).catch(function () {
+        showSent(true);
+      });
 
       var list = all();
       list.push({

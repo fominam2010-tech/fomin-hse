@@ -146,6 +146,16 @@
       </div>
     </form>
 
+    <div class="review-sent" id="reviewSent" hidden>
+      <h3>Отзыв отправлен</h3>
+      <p id="reviewSentText">Спасибо! Публикую после проверки.</p>
+      <textarea class="order-copy" id="reviewCopy" readonly aria-label="Текст отзыва" hidden></textarea>
+      <button class="btn btn-line" type="button" data-copy-order data-copy-target="reviewCopy" id="reviewCopyBtn" hidden>Скопировать текст отзыва</button>
+      <a class="btn btn-line" id="reviewMailLink" href="#" hidden>Открыть почтовую программу</a>
+      <p class="order-copy-hint" id="reviewCopyHint" hidden>Если почтовая программа не открылась — скопируйте текст и пришлите мне в Telegram.</p>
+      <a class="btn btn-line" href="https://t.me/Andrew_F_81" target="_blank" rel="noopener">Написать в Telegram</a>
+    </div>
+
     <div class="reviews" id="reviewsList"></div>
     <p class="reviews__empty" id="reviewsEmpty">Пока отзывов нет. Будьте первым.</p>
 
