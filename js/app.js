@@ -95,6 +95,17 @@
   /* ---------- модальное окно заявки ---------- */
   var modal = doc.getElementById('orderModal');
 
+
+  var API_BASE = 'https://fomin-hse-api.fomin-hse.workers.dev';
+
+  function postJSON(path, payload) {
+    return fetch(API_BASE + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (response) { return response.json(); });
+  }
+
   var MAIL_TO = 'fam-1981@yandex.ru';
 
   function sendByMail(subject, lines, copyFieldId) {
@@ -235,6 +246,24 @@
       if (successText) successText.textContent = name;
 
       var orderData = new FormData(orderForm);
+      var orderPayload = {
+        kind: 'order',
+        course: name,
+        company: (orderData.get('company') || '').toString(),
+        person: (orderData.get('person') || '').toString(),
+        phone: (orderData.get('phone') || '').toString(),
+        email: (orderData.get('email') || '').toString(),
+        city: (orderData.get('city') || '').toString(),
+        address: (orderData.get('address') || '').toString(),
+        date: (orderData.get('date') || '').toString(),
+        people: (orderData.get('people') || '').toString(),
+        comment: (orderData.get('comment') || '').toString()
+      };
+
+      var orderTitle = doc.getElementById('orderSuccessTitle');
+      var orderText = doc.getElementById('orderSuccessText');
+      var orderCopy = doc.getElementById('orderCopy');
+
       sendByMail('Заявка на курс: ' + name, [
         'Курс: ' + name,
         'Компания: ' + (orderData.get('company') || ''),
@@ -247,6 +276,14 @@
         'Человек: ' + (orderData.get('people') || ''),
         'Комментарий: ' + (orderData.get('comment') || '')
       ], 'orderCopy');
+
+      postJSON('/order', orderPayload).then(function (res) {
+        if (res && res.ok) {
+          if (orderTitle) orderTitle.textContent = 'Заявка отправлена';
+          if (orderText) orderText.textContent = 'Заявка по курсу «' + name + '» ушла мне в Telegram. Свяжусь, уточним дату, площадку и программу.';
+          if (orderCopy) orderCopy.hidden = true;
+        }
+      }).catch(function () {});
 
       orderForm.hidden = true;
       if (orderSuccess) orderSuccess.hidden = false;
@@ -578,8 +615,14 @@
     return PROFANITY_ROOTS.some(function (root) { return clean.indexOf(root) !== -1; });
   }
 
+  var remoteReviews = [];
+
   function all() {
     try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+
+  function combined() {
+    return remoteReviews.concat(all());
   }
   function save(list) {
     try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
@@ -596,7 +639,7 @@
   }
 
   function paintRatings() {
-    var list = all();
+    var list = combined();
     document.querySelectorAll('[data-rate-for]').forEach(function (el) {
       var stat = avgFor(list, el.getAttribute('data-rate-for'));
       if (!stat) return;
@@ -608,7 +651,7 @@
   function renderList() {
     var box = document.getElementById('reviewsList');
     if (!box) return;
-    var list = all().slice().sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
+    var list = combined().slice().sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
     var empty = document.getElementById('reviewsEmpty');
 
     if (!list.length) {
@@ -635,6 +678,14 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     paintRatings();
+
+    fetch(API_BASE + '/reviews').then(function (r) { return r.json(); }).then(function (data) {
+      if (data && data.ok && Array.isArray(data.reviews)) {
+        remoteReviews = data.reviews;
+        renderList();
+        paintRatings();
+      }
+    }).catch(function () {});
 
     var form = document.getElementById('reviewForm');
     if (!form) return;
@@ -678,6 +729,25 @@
         return;
       }
       if (error) error.hidden = true;
+
+      var reviewPayload = {
+        name: (data.get('name') || '').toString().trim(),
+        company: (data.get('company') || '').toString().trim(),
+        course: (data.get('course') || '').toString().trim(),
+        date: (data.get('date') || '').toString(),
+        rating: rating,
+        text: (data.get('text') || '').toString().trim()
+      };
+
+      postJSON('/review', reviewPayload).then(function (res) {
+        if (res && res.ok) {
+          var empty = document.getElementById('reviewsEmpty');
+          if (empty) {
+            empty.hidden = false;
+            empty.textContent = 'Спасибо! Отзыв отправлен на проверку — появится после одобрения.';
+          }
+        }
+      }).catch(function () {});
 
       var list = all();
       list.push({
