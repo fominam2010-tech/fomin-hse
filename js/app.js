@@ -483,6 +483,17 @@
       if (empty) empty.classList.toggle('is-visible', shown === 0);
     };
 
+    var syncUrl = function () {
+      var query = new URLSearchParams();
+      if (state.aud !== 'all') query.set('audience', state.aud);
+      if (state.cat !== 'all') query.set('category', state.cat);
+      var search = query.toString();
+      var next = window.location.pathname + (search ? '?' + search : '');
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', next);
+      }
+    };
+
     var updateCatCounts = function () {
       var select = doc.getElementById('catSelect');
       if (!select) return;
@@ -503,6 +514,7 @@
         state.aud = btn.getAttribute('data-aud');
         updateCatCounts();
         applyFilters();
+        syncUrl();
       });
     });
 
@@ -511,6 +523,7 @@
       catSelect.addEventListener('change', function () {
         state.cat = catSelect.value;
         applyFilters();
+        syncUrl();
       });
     }
 
@@ -649,6 +662,17 @@
     if (href.indexOf('tel:') === 0) reachGoal('phone_click');
     else if (href.indexOf('t.me/') !== -1 || href.indexOf('max.ru/') !== -1) reachGoal('messenger_click');
   });
+
+
+  /* возврат в каталог с сохранением выбранного фильтра */
+  (function () {
+    var crumb = doc.querySelector('.breadcrumbs a[href^="catalog.html"]');
+    if (!crumb) return;
+    var ref = document.referrer || '';
+    if (ref.indexOf('catalog.html') !== -1 && ref.indexOf('audience=') !== -1) {
+      crumb.setAttribute('href', ref);
+    }
+  })();
 
   /* ---------- маска телефона ---------- */
   function maskPhone(input) {
