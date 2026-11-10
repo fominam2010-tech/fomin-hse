@@ -1981,3 +1981,6 @@ body.page-inner .site-header {
   .marquee__track { animation: none; width: max-content; }
   .marquee__group { flex-wrap: nowrap; height: 44px; white-space: nowrap; }
 }
+
+.entries { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .entries { grid-template-columns: 1fr; } }
