@@ -302,7 +302,10 @@
       var orderCopyBtn = doc.getElementById('orderCopyBtn');
       var orderCopyHint = doc.getElementById('orderCopyHint');
 
+      var orderHead = modal.querySelector('[data-modal-head]');
+
       var showOrderFallback = function () {
+        if (orderHead) orderHead.hidden = false;
         if (orderTitle) orderTitle.textContent = 'Письмо сформировано';
         if (orderText) orderText.textContent = 'Автоматически отправить не удалось. Скопируйте текст или откройте почтовую программу — заявка по курсу «' + name + '» придёт мне на почту.';
         if (orderCopy) orderCopy.hidden = false;
@@ -317,8 +320,9 @@
       postJSON('/order', orderPayload).then(function (res) {
         if (res && res.ok) {
           reachGoal('order_sent');
-          if (orderTitle) orderTitle.textContent = 'Заявка отправлена';
-          if (orderText) orderText.textContent = 'Заявка по курсу «' + name + '» ушла мне в Telegram. Свяжусь, уточним дату, площадку и программу.';
+          if (orderHead) orderHead.hidden = true;
+          if (orderTitle) orderTitle.textContent = 'Успешно!';
+          if (orderText) orderText.textContent = 'Заявка по курсу «' + name + '» направлена мне в Telegram. Я свяжусь с Вами в ближайшее время.';
           if (orderCopy) orderCopy.hidden = true;
           if (orderCopyBtn) orderCopyBtn.hidden = true;
           if (orderCopyHint) orderCopyHint.hidden = true;
@@ -339,6 +343,8 @@
   /* повторное открытие формы, если заказ открыли после успешной отправки */
   doc.addEventListener('click', function (e) {
     if (e.target.closest('[data-open-order]') && orderForm && orderForm.hidden) {
+      var head = modal.querySelector('[data-modal-head]');
+      if (head) head.hidden = false;
       orderForm.hidden = false;
       if (orderSuccess) orderSuccess.hidden = true;
     }
@@ -428,7 +434,10 @@
       var serviceCopyHint = doc.getElementById('serviceCopyHint');
       var serviceMailLink = doc.getElementById('serviceMailLink');
 
+      var serviceHead = serviceModal.querySelector('[data-modal-head]');
+
       var showServiceFallback = function () {
+        if (serviceHead) serviceHead.hidden = false;
         if (serviceTitle) serviceTitle.textContent = 'Письмо сформировано';
         if (serviceText) serviceText.textContent = 'Автоматически отправить не удалось. Скопируйте текст или откройте почтовую программу — заявка придёт мне на почту.';
         if (serviceCopy) serviceCopy.hidden = false;
@@ -443,8 +452,9 @@
       postJSON('/order', servicePayload).then(function (res) {
         if (res && res.ok) {
           reachGoal('order_sent');
-          if (serviceTitle) serviceTitle.textContent = 'Заявка отправлена';
-          if (serviceText) serviceText.textContent = 'Заявка на «' + label + '» ушла мне в Telegram. Свяжусь, обсудим задачу и сроки.';
+          if (serviceHead) serviceHead.hidden = true;
+          if (serviceTitle) serviceTitle.textContent = 'Успешно!';
+          if (serviceText) serviceText.textContent = 'Заявка на услугу «' + label + '» направлена мне в Telegram. Я свяжусь с Вами в ближайшее время.';
           if (serviceCopy) serviceCopy.hidden = true;
           if (serviceCopyBtn) serviceCopyBtn.hidden = true;
           if (serviceCopyHint) serviceCopyHint.hidden = true;

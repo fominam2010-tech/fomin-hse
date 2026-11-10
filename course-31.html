@@ -233,7 +233,7 @@
   <div class="modal__panel">
     <button class="modal__close" type="button" data-close-order aria-label="Закрыть окно">×</button>
 
-    <div class="modal__head">
+    <div class="modal__head" data-modal-head>
       <span class="eyebrow">Заявка на курс</span>
       <h2 id="orderTitle">Заказать курс</h2>
       <p>Выберите программу — остальное уточним при звонке или в Telegram.</p>
@@ -338,8 +338,8 @@
       <div class="order-success__mark">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <h3 id="orderSuccessTitle">Письмо сформировано</h3>
-      <p id="orderSuccessText">Проверьте текст в почтовой программе и нажмите «Отправить» — заявка по курсу «<span id="successCourse">курс</span>» придёт мне на почту. Если почта не открылась, напишите в Telegram или MAX.</p>
+      <h3 id="orderSuccessTitle">Успешно!</h3>
+      <p id="orderSuccessText">Заявка по курсу «<span id="successCourse">курс</span>» направлена мне в Telegram. Я свяжусь с Вами в ближайшее время.</p>
       <textarea class="order-copy" id="orderCopy" readonly aria-label="Текст заявки"></textarea>
       <button class="btn btn-line" type="button" data-copy-order data-copy-target="orderCopy" id="orderCopyBtn">Скопировать текст заявки</button>
       <a class="btn btn-line" id="orderMailLink" href="#" hidden>Открыть почтовую программу</a>
@@ -355,7 +355,7 @@
   <div class="modal__panel">
     <button class="modal__close" type="button" data-close-service aria-label="Закрыть окно">×</button>
 
-    <div class="modal__head">
+    <div class="modal__head" data-modal-head>
       <span class="eyebrow">Заявка на услугу</span>
       <h2 id="serviceTitle">Заказать услугу</h2>
       <p>Выберите, что нужно, — остальное уточним в переписке.</p>
@@ -417,8 +417,8 @@
       <div class="order-success__mark">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <h3 id="serviceSuccessTitle">Письмо сформировано</h3>
-      <p id="serviceSuccessText">Проверьте текст и нажмите «Отправить» — заявка на «<span id="successService">услуга</span>» придёт мне на почту. Если почта не открылась, напишите в Telegram.</p>
+      <h3 id="serviceSuccessTitle">Успешно!</h3>
+      <p id="serviceSuccessText">Заявка на услугу «<span id="successService">услуга</span>» направлена мне в Telegram. Я свяжусь с Вами в ближайшее время.</p>
       <textarea class="order-copy" id="serviceCopy" readonly aria-label="Текст заявки"></textarea>
       <button class="btn btn-line" type="button" data-copy-order data-copy-target="serviceCopy" id="serviceCopyBtn">Скопировать текст заявки</button>
       <a class="btn btn-line" id="serviceMailLink" href="#" hidden>Открыть почтовую программу</a>
