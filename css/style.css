@@ -1951,3 +1951,33 @@ body.page-inner .site-header {
 .review-sent { background: #3b4b5a; border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin-bottom: 26px; }
 .review-sent h3 { margin-bottom: 10px; }
 .review-sent p { color: var(--muted); margin-bottom: 14px; }
+
+.services-grid--groups { grid-template-columns: repeat(3, 1fr); }
+.service--group { align-items: flex-start; }
+.service__list { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.service__list li { position: relative; padding-left: 16px; font-size: 14px; color: var(--muted); }
+.service__list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+.services__note { margin-top: 20px; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 760px; }
+@media (max-width: 900px) {
+  .services-grid--groups { grid-template-columns: 1fr; }
+}
+
+.footer-note { max-width: 900px; margin: 26px 0 10px; font-size: 12.5px; line-height: 1.6; color: var(--muted); opacity: .85; }
+
+.review-form__consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+.review-form__consent input { margin-top: 2px; }
+.review-form__consent a { color: var(--blue); }
+
+/* бегущая строка тем */
+.marquee { position: relative; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #1a242e; }
+.marquee__track { display: flex; width: max-content; animation: marquee-move 80s linear infinite; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__group { display: flex; align-items: center; gap: 26px; padding: 0 26px; height: 44px; white-space: nowrap; }
+.marquee__group span { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.marquee__group i { font-style: normal; color: var(--blue); opacity: .6; }
+@keyframes marquee-move { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; }
+  .marquee__track { animation: none; width: max-content; }
+  .marquee__group { flex-wrap: nowrap; height: 44px; white-space: nowrap; }
+}
