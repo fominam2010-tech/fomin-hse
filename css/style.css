@@ -1356,7 +1356,7 @@ body.nav-open .burger span::after { opacity: 0; }
 
 /* ---------- юридические страницы ---------- */
 
-.legal { max-width: 760px; }
+.legal { max-width: 1040px; }
 .legal h2 { font-size: 22px; margin: 42px 0 12px; }
 .legal h2:first-child { margin-top: 0; }
 .legal p { color: #3c4a58; font-size: 16px; }
@@ -1957,12 +1957,12 @@ body.page-inner .site-header {
 .service__list { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .service__list li { position: relative; padding-left: 16px; font-size: 14px; color: var(--muted); }
 .service__list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
-.services__note { margin-top: 20px; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 760px; }
+.services__note { margin-top: 20px; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: none; }
 @media (max-width: 900px) {
   .services-grid--groups { grid-template-columns: 1fr; }
 }
 
-.footer-note { max-width: 900px; margin: 26px 0 10px; font-size: 12.5px; line-height: 1.6; color: var(--muted); opacity: .85; }
+.footer-note { max-width: none; margin: 26px 0 10px; font-size: 12.5px; line-height: 1.6; color: var(--muted); opacity: .85; }
 
 .review-form__consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); margin-bottom: 18px; }
 .review-form__consent input { margin-top: 2px; }
