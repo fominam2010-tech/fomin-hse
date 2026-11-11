@@ -1986,3 +1986,10 @@ body.page-inner .site-header {
 @media (max-width: 900px) { .entries { grid-template-columns: 1fr; } }
 
 [hidden] { display: none !important; }
+
+/* цвет направления в чипе */
+.chip--c1 { background: rgba(74, 157, 232, .16); color: #a8cdf0; }
+.chip--c2 { background: rgba(63, 182, 168, .16); color: #8fd9cf; }
+.chip--c4 { background: rgba(217, 164, 91, .16); color: #e8c08a; }
+.chip--c5 { background: rgba(143, 156, 232, .18); color: #bcc5f4; }
+.chip--c7 { background: rgba(111, 191, 115, .16); color: #a9dcae; }
