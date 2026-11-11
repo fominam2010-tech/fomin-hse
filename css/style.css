@@ -2002,3 +2002,4 @@ body.page-inner .site-header {
 .format-card b { display: block; font-size: 15px; color: var(--ink); margin-bottom: 6px; }
 .format-card span { font-size: 13px; color: var(--muted); line-height: 1.45; }
 @media (max-width: 900px) { .formats__grid { grid-template-columns: 1fr; } }
+.chip--c8 { background: rgba(190, 140, 210, .16); color: #dcb8ec; }
