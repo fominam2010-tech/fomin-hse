@@ -1993,3 +1993,12 @@ body.page-inner .site-header {
 .chip--c4 { background: rgba(217, 164, 91, .16); color: #e8c08a; }
 .chip--c5 { background: rgba(143, 156, 232, .18); color: #bcc5f4; }
 .chip--c7 { background: rgba(111, 191, 115, .16); color: #a9dcae; }
+
+.formats { margin-top: 34px; }
+.formats__head { margin-bottom: 16px; }
+.formats__head p { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.formats__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.format-card { background: #3b4b5a; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.format-card b { display: block; font-size: 15px; color: var(--ink); margin-bottom: 6px; }
+.format-card span { font-size: 13px; color: var(--muted); line-height: 1.45; }
+@media (max-width: 900px) { .formats__grid { grid-template-columns: 1fr; } }
